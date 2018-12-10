@@ -15,8 +15,10 @@ type OIDCServer interface {
 }
 
 type oidcServer struct {
-	rsa   *rsaProcessor
-	keyID string
+	rsa        *rsaProcessor
+	keyID      string
+	serverIP   string
+	serverPort string
 }
 
 type providerEndpoints struct {
