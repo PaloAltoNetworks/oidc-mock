@@ -8,6 +8,6 @@ spec:
       app: server
   ports:
   - protocol: TCP
-    port: 443
+    port: 6999
     targetPort: 6999
   type: LoadBalancer
