@@ -8,7 +8,7 @@ CA_SAN=${CA_SAN:-$1}
 mkdir .data
 
 # generate signing cert and key
-tg cert --name system --org oidc.com --common-name oidc-mock --ip ${CA_SAN} --auth-server
+tg cert --name system --org oidc.com --common-name oidc-mock --ip ${CA_SAN} --auth-server --is-ca
 mv system-cert.pem .data/system.crt
 mv system-key.pem .data/system.key
 
