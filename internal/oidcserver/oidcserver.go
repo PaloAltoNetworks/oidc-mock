@@ -13,13 +13,14 @@ import (
 )
 
 // NewOIDCServer returns ODIC handler
-func NewOIDCServer(serverIP, serverPort, publicKeyPath, privateKeyPath string) OIDCServer {
+func NewOIDCServer(serverFlow ServerFlowType, serverIP, serverPort, publicKeyPath, privateKeyPath string) OIDCServer {
 
 	return &oidcServer{
 		rsa:        newRSAProcessor(publicKeyPath, privateKeyPath),
 		keyID:      uuid.Must(uuid.NewV4()).String(),
 		serverIP:   serverIP,
 		serverPort: serverPort,
+		serverFlow: serverFlow,
 	}
 }
 
@@ -28,7 +29,7 @@ func (o *oidcServer) ProviderEndpoints(w http.ResponseWriter, r *http.Request) {
 
 	zap.L().Debug("ProviderEndpoints called")
 
-	providerURLs := generateProviderURLs(o.serverIP, o.serverPort)
+	providerURLs := generateProviderURLs(o.serverFlow, o.serverIP, o.serverPort)
 
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(providerURLs)
@@ -39,6 +40,12 @@ func (o *oidcServer) ProviderEndpoints(w http.ResponseWriter, r *http.Request) {
 func (o *oidcServer) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	zap.L().Debug("Authenticate called")
+
+	if o.serverFlow == ServerFlowTypeAuthFailure {
+		http.Error(w, "Authentication failure", http.StatusUnauthorized)
+		zap.L().Warn("Authentication failure", zap.Reflect("type", o.serverFlow))
+		return
+	}
 
 	state := r.URL.Query().Get("state")
 	redURI := r.URL.Query().Get("redirect_uri")
@@ -66,7 +73,7 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 
 	claims := jwt.MapClaims{
 		"sub":  "1234567890",
-		"iss":  generateCompleteURL(o.serverIP, o.serverPort, ""),
+		"iss":  generateCompleteURL(o.serverFlow, o.serverIP, o.serverPort, ""),
 		"name": "oidc-mock",
 		"exp":  tokenExpiry,
 		"aud":  "apps.oidcmock.com",

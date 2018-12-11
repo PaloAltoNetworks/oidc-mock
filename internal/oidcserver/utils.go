@@ -1,19 +1,35 @@
 package oidcserver
 
-import "fmt"
+import (
+	"fmt"
+	"path"
+)
 
-func generateProviderURLs(ip, port string) providerEndpoints {
+func generateProviderURLs(serverFlow ServerFlowType, ip, port string) providerEndpoints {
 
 	return providerEndpoints{
-		Issuer:      generateCompleteURL(ip, port, ""),
-		AuthURL:     generateCompleteURL(ip, port, "/auth"),
-		TokenURL:    generateCompleteURL(ip, port, "/token"),
-		UserInfoURL: generateCompleteURL(ip, port, "/userInfo"),
-		JWKSURL:     generateCompleteURL(ip, port, "/cert"),
+		Issuer:      generateCompleteURL(serverFlow, ip, port, ""),
+		AuthURL:     generateCompleteURL(serverFlow, ip, port, "/auth"),
+		TokenURL:    generateCompleteURL(serverFlow, ip, port, "/token"),
+		UserInfoURL: generateCompleteURL(serverFlow, ip, port, "/userInfo"),
+		JWKSURL:     generateCompleteURL(serverFlow, ip, port, "/cert"),
 	}
 }
 
-func generateCompleteURL(ip, port, endpoint string) string {
+func generateCompleteURL(serverFlow ServerFlowType, ip, port, endpoint string) string {
+
+	if endpoint == "" {
+		endpoint = "/"
+	}
+
+	switch serverFlow {
+	case ServerFlowTypeAuthFailure:
+		endpoint = path.Join(endpoint, AuthFailure)
+	case ServerFlowTypeInvalidCert:
+		endpoint = path.Join(endpoint, CertInvalid)
+	case ServerFlowTypeInvalidToken:
+		endpoint = path.Join(endpoint, TokenInvalid)
+	}
 
 	return fmt.Sprintf("https://%s%s%s", ip, port, endpoint)
 }

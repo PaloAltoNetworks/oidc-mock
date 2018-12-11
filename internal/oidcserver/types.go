@@ -19,6 +19,7 @@ type oidcServer struct {
 	keyID      string
 	serverIP   string
 	serverPort string
+	serverFlow ServerFlowType
 }
 
 type providerEndpoints struct {
@@ -36,3 +37,14 @@ type tokens struct {
 	TokenType    string        `json:"token_type"`
 	ExpiresIn    time.Duration `json:"expires_in"`
 }
+
+// ServerFlowType is used to configure the server flow
+type ServerFlowType int
+
+// Serverflow types
+const (
+	ServerFlowTypeSuccess ServerFlowType = iota
+	ServerFlowTypeAuthFailure
+	ServerFlowTypeInvalidToken
+	ServerFlowTypeInvalidCert
+)

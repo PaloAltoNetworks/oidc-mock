@@ -13,7 +13,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/common/version"
 	flag "github.com/spf13/pflag"
-	"go.aporeto.io/oidc-mock/internal/oidcserver"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -52,13 +51,8 @@ func StartServer(cfg *Configuration) {
 	zap.L().Info("Configuration", zap.Reflect("config", cfg))
 
 	r := mux.NewRouter()
-	oidc := oidcserver.NewOIDCServer(cfg.ServerIP, cfg.ServerPort, cfg.PublicKeyPath, cfg.PrivateKeyPath)
 
-	r.HandleFunc("/.well-known/openid-configuration", oidc.ProviderEndpoints).Methods(http.MethodGet)
-	r.HandleFunc("/auth", oidc.Authenticate).Methods(http.MethodGet)
-	r.HandleFunc("/userInfo", oidc.UserInfo).Methods(http.MethodGet)
-	r.HandleFunc("/token", oidc.IssueToken).Methods(http.MethodPost)
-	r.HandleFunc("/cert", oidc.IssueCertificate).Methods(http.MethodGet)
+	registerRoutes(r, cfg.ServerIP, cfg.ServerPort, cfg.PublicKeyPath, cfg.PrivateKeyPath)
 
 	go func() {
 		if err := http.ListenAndServeTLS(cfg.ServerPort, ".data/system.crt", ".data/system.key", r); err != nil {
