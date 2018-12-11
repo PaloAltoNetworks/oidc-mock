@@ -1,0 +1,25 @@
+language: go
+sudo: required
+dist: trusty
+
+go_import_path: go.aporeto.io/oidc-mock
+
+go:
+ - 1.11.2
+
+env:
+  global:
+    - TOOLS_CMD=golang.org/x/tools/cmd
+    - PATH=$GOROOT/bin:$PATH
+    - SUDO_PERMITTED=1
+
+before_install:
+  - go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+  - go get -u github.com/golang/dep/cmd/dep
+
+install:
+  - dep ensure -v
+
+script:
+  - golangci-lint run --deadline=5m --disable-all --exclude-use-default=false --enable=govet --enable=golint --enable=ineffassign --enable=goconst --enable=errcheck --enable=varcheck --enable=structcheck --enable=gosimple --enable=misspell --enable=deadcode --enable=staticcheck --enable=goimports --enable=unused --enable=unconvert --enable=unparam --enable=prealloc --enable=nakedret --enable=typecheck ./...
+  - sudo -E env "PATH=$PATH" go test ./...
