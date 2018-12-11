@@ -1,6 +1,6 @@
-FROM ubuntu
+FROM alpine
 
-RUN apt-get upgrade -y && apt-get update -y
+RUN apk update && apk --no-cache add curl && apk add --no-cache bash
 
 RUN mkdir -p /oidc-mock
 

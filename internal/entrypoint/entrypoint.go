@@ -62,7 +62,9 @@ func StartServer(cfg *Configuration) {
 
 	go func() {
 		if err := http.ListenAndServeTLS(cfg.ServerPort, ".data/system.crt", ".data/system.key", r); err != nil {
-			log.Fatal("error starting server", err)
+			zap.L().Fatal("Unable to start server",
+				zap.String("port", cfg.ServerPort),
+				zap.Error(err))
 		}
 	}()
 
