@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  labels:
+    app: server
+  name: oidc-mock
+  namespace: oidc-mock
+spec:
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+        - image: gcr.io/aporetodev/oidc-mock:latest
+          imagePullPolicy: Always
+          env:
+             - name: OIDCMOCK_LOG_LEVEL
+               value: "debug"
+               # This is the loadbalancerIP, start oidc-mock-service.yaml first and the the IP
+             - name: OIDCMOCK_SERVER_IP
+               value: 35.185.213.238
+             - name: OIDCMOCK_SERVER_PORT
+               value: :6999
+          name: oidc-mock

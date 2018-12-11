@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: server-public
+  namespace: oidc-mock
+spec:
+  selector:
+      app: server
+  ports:
+  - protocol: TCP
+    port: 443
+    targetPort: 6999
+  type: LoadBalancer
