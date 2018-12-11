@@ -36,16 +36,3 @@ type tokens struct {
 	TokenType    string        `json:"token_type"`
 	ExpiresIn    time.Duration `json:"expires_in"`
 }
-
-type signingKeys struct {
-	Keys []keys `json:"keys"`
-}
-
-type keys struct {
-	Use string `json:"use"`
-	Kid string `json:"kid"`
-	E   string `json:"e"`
-	Kty string `json:"kty"`
-	Alg string `json:"alg"`
-	N   string `json:"n"`
-}
