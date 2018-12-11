@@ -4,6 +4,9 @@ CA_SAN=${CA_SAN:-$1}
 
 [ ! -z ${CA_SAN} ] || (echo "Missing ip" && exit 1)
 
+# create creds folder
+mkdir .data
+
 # generate signing cert and key
 tg cert --name system --org oidc.com --common-name oidc-mock --ip ${CA_SAN} --auth-server
 mv system-cert.pem .data/system.crt
