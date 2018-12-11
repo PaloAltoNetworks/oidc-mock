@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/prometheus/common/version"
 	flag "github.com/spf13/pflag"
 	"go.aporeto.io/oidc-mock/internal/oidcserver"
 	"go.uber.org/zap"
@@ -42,11 +43,13 @@ func banner(version, revision string) {
 // StartServer starts the server
 func StartServer(cfg *Configuration) {
 
-	banner("x.y.z", "master")
+	banner(version.Version, version.Revision)
 
 	if err := setLogs(cfg.LogFormat, cfg.LogLevel); err != nil {
 		log.Fatalf("Error setting up logs: %s", err)
 	}
+
+	zap.L().Info("Configuration", zap.Reflect("config", cfg))
 
 	r := mux.NewRouter()
 	oidc := oidcserver.NewOIDCServer(cfg.ServerIP, cfg.ServerPort, cfg.PublicKeyPath, cfg.PrivateKeyPath)
@@ -58,7 +61,7 @@ func StartServer(cfg *Configuration) {
 	r.HandleFunc("/cert", oidc.IssueCertificate).Methods(http.MethodGet)
 
 	go func() {
-		if err := http.ListenAndServeTLS(cfg.ServerPort, ".data/selfsigned.crt", ".data/selfsigned.key", r); err != nil {
+		if err := http.ListenAndServeTLS(cfg.ServerPort, ".data/system.crt", ".data/system.key", r); err != nil {
 			log.Fatal("error starting server", err)
 		}
 	}()

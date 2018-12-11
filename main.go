@@ -54,8 +54,8 @@ func init() {
 	oidcMockCmd.Flags().StringVar(&config.ServerIP, "server-ip", "192.168.100.1", "Set the default server ip")
 	oidcMockCmd.Flags().StringVar(&config.ServerPort, "server-port", ":6999", "Set the default server port")
 
-	oidcMockCmd.Flags().StringVar(&config.PrivateKeyPath, "private-key", ".data/app.rsa", "Set the default private key")
-	oidcMockCmd.Flags().StringVar(&config.PublicKeyPath, "public-key", ".data/app.rsa.pub", "Set the default public key")
+	oidcMockCmd.Flags().StringVar(&config.PrivateKeyPath, "private-key", ".data/oidc.rsa", "Set the default private key")
+	oidcMockCmd.Flags().StringVar(&config.PublicKeyPath, "public-key", ".data/oidc.rsa.pub", "Set the default public key")
 
 	oidcMockCmd.Flags().BoolP("version", "v", false, "Show version.")
 

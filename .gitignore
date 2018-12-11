@@ -1,2 +1,6 @@
 oidcmock
+oidc-mock
+docker/oidcmock
 .data
+vendor
+Gopkg.lock
