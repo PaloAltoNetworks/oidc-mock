@@ -12,7 +12,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/prometheus/common/version"
-	flag "github.com/spf13/pflag"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -27,11 +26,6 @@ type Configuration struct {
 
 	LogFormat string
 	LogLevel  string
-}
-
-func usage() {
-	flag.PrintDefaults()
-	os.Exit(2)
 }
 
 func banner(version, revision string) {
