@@ -19,7 +19,7 @@ spec:
           imagePullPolicy: Always
           env:
              - name: OIDCMOCK_LOG_LEVEL
-               value: "debug"
+               value: "info"
                # NOTE: This is used to generate endpoints to consumers
              - name: OIDCMOCK_SERVER_IP
                value: "oidcmock.aporeto.us"

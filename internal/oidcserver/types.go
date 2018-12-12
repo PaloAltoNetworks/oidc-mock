@@ -2,6 +2,7 @@ package oidcserver
 
 import (
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -21,6 +22,8 @@ type oidcServer struct {
 	serverPort string
 	serverFlow ServerFlowType
 	devMode    bool
+
+	sync.Mutex
 }
 
 type providerEndpoints struct {

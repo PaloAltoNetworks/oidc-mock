@@ -28,6 +28,9 @@ func NewOIDCServer(serverFlow ServerFlowType, serverIP, serverPort, publicKeyPat
 // ProviderEndpoints returns provider urls for lib
 func (o *oidcServer) ProviderEndpoints(w http.ResponseWriter, r *http.Request) {
 
+	o.Lock()
+	defer o.Unlock()
+
 	zap.L().Debug("Discovering Endpoints")
 
 	providerURLs := generateProviderURLs(o.serverFlow, o.serverIP, o.serverPort, o.devMode)
@@ -39,6 +42,9 @@ func (o *oidcServer) ProviderEndpoints(w http.ResponseWriter, r *http.Request) {
 // Authenticate is a mock call which by default redirects to redirect_uri given in request
 // NOTE: There is NO authentication is done here
 func (o *oidcServer) Authenticate(w http.ResponseWriter, r *http.Request) {
+
+	o.Lock()
+	defer o.Unlock()
 
 	zap.L().Debug("Authenticating")
 
@@ -67,6 +73,9 @@ func (o *oidcServer) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 // IssueToken issues JWT token
 func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
+
+	o.Lock()
+	defer o.Unlock()
 
 	zap.L().Debug("Issuing Token")
 
@@ -106,6 +115,9 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 // IssueToken issues public certificate used to sign JWT
 func (o *oidcServer) IssueCertificate(w http.ResponseWriter, r *http.Request) {
 
+	o.Lock()
+	defer o.Unlock()
+
 	zap.L().Debug("Issuing Certificate")
 
 	jwk := jose.JSONWebKey{
@@ -127,6 +139,10 @@ func (o *oidcServer) IssueCertificate(w http.ResponseWriter, r *http.Request) {
 
 // UserInfo ...
 func (o *oidcServer) UserInfo(w http.ResponseWriter, r *http.Request) {
+
+	o.Lock()
+	defer o.Unlock()
+
 	zap.L().Debug("Userinfo called")
 	// Do nothing
 }
