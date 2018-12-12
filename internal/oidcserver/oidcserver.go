@@ -27,7 +27,7 @@ func NewOIDCServer(serverFlow ServerFlowType, serverIP, serverPort, publicKeyPat
 // ProviderEndpoints returns provider urls for lib
 func (o *oidcServer) ProviderEndpoints(w http.ResponseWriter, r *http.Request) {
 
-	zap.L().Debug("ProviderEndpoints called")
+	zap.L().Debug("Discovering Endpoints")
 
 	providerURLs := generateProviderURLs(o.serverFlow, o.serverIP, o.serverPort)
 
@@ -39,7 +39,7 @@ func (o *oidcServer) ProviderEndpoints(w http.ResponseWriter, r *http.Request) {
 // NOTE: There is NO authentication is done here
 func (o *oidcServer) Authenticate(w http.ResponseWriter, r *http.Request) {
 
-	zap.L().Debug("Authenticate called")
+	zap.L().Debug("Authenticating")
 
 	if o.serverFlow == ServerFlowTypeAuthFailure {
 		http.Error(w, "Authentication failure", http.StatusUnauthorized)
@@ -67,7 +67,7 @@ func (o *oidcServer) Authenticate(w http.ResponseWriter, r *http.Request) {
 // IssueToken issues JWT token
 func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 
-	zap.L().Debug("IssueToken called")
+	zap.L().Debug("Issuing Token")
 
 	tokenExpiry := time.Now().AddDate(100, 0, 0).Unix()
 
@@ -105,7 +105,7 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 // IssueToken issues public certificate used to sign JWT
 func (o *oidcServer) IssueCertificate(w http.ResponseWriter, r *http.Request) {
 
-	zap.L().Debug("IssueCertificate called")
+	zap.L().Debug("Issuing Certificate")
 
 	jwk := jose.JSONWebKey{
 		Key:       o.rsa.verifyKey(),
