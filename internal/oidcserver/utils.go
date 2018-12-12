@@ -18,10 +18,6 @@ func generateProviderURLs(serverFlow ServerFlowType, ip, port string, devMode bo
 
 func generateCompleteURL(serverFlow ServerFlowType, ip, port, endpoint string, devMode bool) string {
 
-	if endpoint == "" {
-		endpoint = "/"
-	}
-
 	switch serverFlow {
 	case ServerFlowTypeAuthFailure:
 		endpoint = path.Join(endpoint, AuthFailure)
