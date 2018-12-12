@@ -77,7 +77,7 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 		"iss":  generateCompleteURL(o.serverFlow, o.serverIP, o.serverPort, "", o.devMode),
 		"name": "oidc-mock",
 		"exp":  tokenExpiry,
-		"aud":  "apps.oidcmock.com",
+		"aud":  "abcd1234.apps.oidcmock.com",
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
