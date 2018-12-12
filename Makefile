@@ -13,7 +13,7 @@ build:
 package: build
 	mv oidcmock docker/oidcmock
 	rm -rf docker/.data
-	cp -r .data docker/.data
+	cp -a .data docker/.data
 
 clean:
 	rm -rf vendor
