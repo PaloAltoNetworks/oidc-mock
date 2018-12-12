@@ -49,7 +49,7 @@ func StartServer(cfg *Configuration) {
 	registerRoutes(r, cfg.ServerIP, cfg.ServerPort, cfg.PublicKeyPath, cfg.PrivateKeyPath)
 
 	go func() {
-		if err := http.ListenAndServeTLS(cfg.ServerPort, ".data/system.crt", ".data/system.key", r); err != nil {
+		if err := http.ListenAndServeTLS(cfg.ServerPort, ".data/server.crt", ".data/server.key", r); err != nil {
 			zap.L().Fatal("Unable to start server",
 				zap.String("port", cfg.ServerPort),
 				zap.Error(err))
