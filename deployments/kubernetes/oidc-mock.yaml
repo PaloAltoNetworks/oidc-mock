@@ -20,9 +20,9 @@ spec:
           env:
              - name: OIDCMOCK_LOG_LEVEL
                value: "debug"
-               # This is the loadbalancerIP, start oidc-mock-service.yaml first and get the IP
+               # NOTE: This is used to generate endpoints to consumers
              - name: OIDCMOCK_SERVER_IP
-               value: 35.184.101.241
+               value: "oidcmock.aporeto.us"
              - name: OIDCMOCK_SERVER_PORT
                value: :6999
              - name: OIDCMOCK_DEV
