@@ -13,7 +13,7 @@ import (
 )
 
 // NewOIDCServer returns ODIC handler
-func NewOIDCServer(serverFlow ServerFlowType, serverIP, serverPort, publicKeyPath, privateKeyPath string) OIDCServer {
+func NewOIDCServer(serverFlow ServerFlowType, serverIP, serverPort, publicKeyPath, privateKeyPath string, devMode bool) OIDCServer {
 
 	return &oidcServer{
 		rsa:        newRSAProcessor(publicKeyPath, privateKeyPath),
@@ -21,6 +21,7 @@ func NewOIDCServer(serverFlow ServerFlowType, serverIP, serverPort, publicKeyPat
 		serverIP:   serverIP,
 		serverPort: serverPort,
 		serverFlow: serverFlow,
+		devMode:    devMode,
 	}
 }
 
@@ -29,7 +30,7 @@ func (o *oidcServer) ProviderEndpoints(w http.ResponseWriter, r *http.Request) {
 
 	zap.L().Debug("Discovering Endpoints")
 
-	providerURLs := generateProviderURLs(o.serverFlow, o.serverIP, o.serverPort)
+	providerURLs := generateProviderURLs(o.serverFlow, o.serverIP, o.serverPort, o.devMode)
 
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(providerURLs)
@@ -73,7 +74,7 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 
 	claims := jwt.MapClaims{
 		"sub":  "1234567890",
-		"iss":  generateCompleteURL(o.serverFlow, o.serverIP, o.serverPort, ""),
+		"iss":  generateCompleteURL(o.serverFlow, o.serverIP, o.serverPort, "", o.devMode),
 		"name": "oidc-mock",
 		"exp":  tokenExpiry,
 		"aud":  "apps.oidcmock.com",

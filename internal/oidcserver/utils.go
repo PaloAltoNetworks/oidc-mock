@@ -5,18 +5,18 @@ import (
 	"path"
 )
 
-func generateProviderURLs(serverFlow ServerFlowType, ip, port string) providerEndpoints {
+func generateProviderURLs(serverFlow ServerFlowType, ip, port string, devMode bool) providerEndpoints {
 
 	return providerEndpoints{
-		Issuer:      generateCompleteURL(serverFlow, ip, port, ""),
-		AuthURL:     generateCompleteURL(serverFlow, ip, port, "/auth"),
-		TokenURL:    generateCompleteURL(serverFlow, ip, port, "/token"),
-		UserInfoURL: generateCompleteURL(serverFlow, ip, port, "/userInfo"),
-		JWKSURL:     generateCompleteURL(serverFlow, ip, port, "/cert"),
+		Issuer:      generateCompleteURL(serverFlow, ip, port, "", devMode),
+		AuthURL:     generateCompleteURL(serverFlow, ip, port, "/auth", devMode),
+		TokenURL:    generateCompleteURL(serverFlow, ip, port, "/token", devMode),
+		UserInfoURL: generateCompleteURL(serverFlow, ip, port, "/userInfo", devMode),
+		JWKSURL:     generateCompleteURL(serverFlow, ip, port, "/cert", devMode),
 	}
 }
 
-func generateCompleteURL(serverFlow ServerFlowType, ip, port, endpoint string) string {
+func generateCompleteURL(serverFlow ServerFlowType, ip, port, endpoint string, devMode bool) string {
 
 	if endpoint == "" {
 		endpoint = "/"
@@ -31,5 +31,9 @@ func generateCompleteURL(serverFlow ServerFlowType, ip, port, endpoint string) s
 		endpoint = path.Join(endpoint, TokenInvalid)
 	}
 
-	return fmt.Sprintf("https://%s%s%s", ip, port, endpoint)
+	if devMode {
+		return fmt.Sprintf("https://%s%s%s", ip, port, endpoint)
+	}
+
+	return fmt.Sprintf("https://%s%s", ip, endpoint)
 }

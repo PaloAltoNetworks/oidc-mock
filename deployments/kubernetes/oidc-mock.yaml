@@ -23,7 +23,8 @@ spec:
                # This is the loadbalancerIP, start oidc-mock-service.yaml first and get the IP
              - name: OIDCMOCK_SERVER_IP
                value: 35.184.101.241
-               # This should match the port and targetPort of oidc-mock-service.yaml
              - name: OIDCMOCK_SERVER_PORT
                value: :6999
+             - name: OIDCMOCK_DEV
+               value: "false"
           name: oidc-mock

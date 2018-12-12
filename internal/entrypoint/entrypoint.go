@@ -24,6 +24,8 @@ type Configuration struct {
 	PrivateKeyPath string
 	PublicKeyPath  string
 
+	DevelopmentMode bool
+
 	LogFormat string
 	LogLevel  string
 }
@@ -46,7 +48,7 @@ func StartServer(cfg *Configuration) {
 
 	r := mux.NewRouter()
 
-	registerRoutes(r, cfg.ServerIP, cfg.ServerPort, cfg.PublicKeyPath, cfg.PrivateKeyPath)
+	registerRoutes(r, cfg.ServerIP, cfg.ServerPort, cfg.PublicKeyPath, cfg.PrivateKeyPath, cfg.DevelopmentMode)
 
 	go func() {
 		if err := http.ListenAndServeTLS(cfg.ServerPort, ".data/server.crt", ".data/server.key", r); err != nil {

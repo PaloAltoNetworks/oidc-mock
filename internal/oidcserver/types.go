@@ -20,6 +20,7 @@ type oidcServer struct {
 	serverIP   string
 	serverPort string
 	serverFlow ServerFlowType
+	devMode    bool
 }
 
 type providerEndpoints struct {
