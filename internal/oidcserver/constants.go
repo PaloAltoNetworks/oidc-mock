@@ -4,5 +4,37 @@ package oidcserver
 const (
 	AuthFailure  = "typeauthfailure"
 	TokenInvalid = "typetokeninvalid"
+	TokenMissing = "typetokenmissing"
 	CertInvalid  = "typecertinvalid"
+	CertMissing  = "typecertmissing"
+)
+
+const (
+	invalidPrivateKey = `-----BEGIN RSA PRIVATE KEY-----
+MIIEogIBAAKCAQEAwcoPN+61cmoKHy/iSoLlImeLmo4mSwypxQ3yYjGVgzddSgga
+qFicIOrrg4lmLkIxS7FRspfFwOz9aXDrdNTV3U34TWksqzJnG6RwRRUk8VltjGVI
+y1TxPs+JpG+jleyc3gK9hvTUBn0qPT+M5gqR08UxOw24CWj0jaLVtCdS/+GGgwNA
+u/bV6bIc0XQmOeqto4Fkr3+lte42sIBEZIw7NK/KI4PYldCZcMj+7wCknwgSfd4v
+VvebYtQhbgNTKTuDLhyj5FVFCPx7txgh3r9nzKMLabjXrZicQn7Z57BiMXk72nbg
+Zg5FSriYe0vtngql84ef8pIhB67p3jIcT54qjwIDAQABAoIBAGzrR8B1L5CeHxBG
+VpbwmR7MOf/lc4ptFKKH4zrjiZhVrt5kTa9fFmm+AB9PQ5ouZAyaHkQV3/U+fnQc
+Hors8UNQhoXj3lJeous7ckqxxrDMRbFKYC7AkFNwTHmascQbWFPEEIhg5Sa8hNgl
+9uh4+lufkrsRS+YmEoXlBt4Z2CGuwmddg9ii3KdL/kFK2uIL3d+J6eT5JS9bBUCS
+OfRZizgvnOv1NyHurej5BRwkw+SRN/6iLdOVEq1Y+HCWje9gygEEb6AamxZpHBzu
+gda3XSlvl5qOYyzphfQ82mBoRM0FgbZ/n0s5uXiKJpI33mPi4GrHE6v05N/KmmGk
+lNKkSxkCgYEA72JJgqa+IvWg5UP7iTbEGwHsBivNtUx9c/IaZcJSx3N3A6KfiqIS
+ALLjrzmsjYWXSg+vhg/aFNEaL6o+3HP52dH6W9Jxz5Iuc2P8bOLrV3J7P5Pk795r
+ItYxclKnlZcDYsfrWJMerCgEgqctq0yVz5guswbm1MZZBt3l6d/9KwUCgYEAzz2V
+CBdpqL4sUyRMIC+FSWdy7etxbc4/XQxr18p9Hpepl7LlPfrumczzIlhYsqEPc9SE
+vVnN6aFff+2gdaNiG6jUgCbjuLtvDu8IOluf4oFHOTR6idgqfJ1evYlv+64XehhM
+F9yoon7JFIbBc+E03kSqlzwhm35L+12n9BY7O4MCgYAu3gBkav7o20xP9rplh+pn
+Gz45ixPwPfSF4c2XRK9uS0Xu2UUBIHAD4QJAyTrmTlRrdJy505qv3qyQznUWNkKh
+icHJfm8343fisZ23N8o5ybklnnABInu5S1RM/K/A0tsf2OJT6iHkNMWFSvPfCNR/
+21yxQlWpLNg7RvB/lJH9fQKBgAmRnFn9SsGh1kYYfPNXfl3/Ss01e81IIqDXO/uA
+u/o3onsApZkRBwdO8UL6tU26Jg6BF4fup5VMAC7V9/y2iIcian1oTkdvUBdubgDT
+zjQVKAa6J5ZJxtxuH7u8ptEGHstiZ9EKPTcTh5FND42cLma84OuOuTaGxFdc4a5h
+gGalAoGASIit52G3Cs3yxkD5EAc7nsHGHuGkrIdClPXkadXyCtIehKkMrugBvkip
+l9BUt93o9Jj5PS9avmjNBJU2fZetbFzlBAYfP74vg/HroUhIQxK5bWI4EMOY4FTp
+ES4a96nNWIcnmwt/kSLAhS7kUZAACXlGYfNo/q5mdHL+1234567=
+-----END RSA PRIVATE KEY-----`
 )

@@ -51,4 +51,6 @@ const (
 	ServerFlowTypeAuthFailure
 	ServerFlowTypeInvalidToken
 	ServerFlowTypeInvalidCert
+	ServerFlowTypeMissingToken
+	ServerFlowTypeMissingCert
 )

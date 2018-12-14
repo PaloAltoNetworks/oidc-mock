@@ -2,8 +2,10 @@ package oidcserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
+	"path"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -16,7 +18,7 @@ import (
 func NewOIDCServer(serverFlow ServerFlowType, serverIP, serverPort, publicKeyPath, privateKeyPath string, devMode bool) OIDCServer {
 
 	return &oidcServer{
-		rsa:        newRSAProcessor(publicKeyPath, privateKeyPath),
+		rsa:        newRSAProcessor(serverFlow, publicKeyPath, privateKeyPath),
 		keyID:      uuid.Must(uuid.NewV4()).String(),
 		serverIP:   serverIP,
 		serverPort: serverPort,
@@ -33,7 +35,7 @@ func (o *oidcServer) ProviderEndpoints(w http.ResponseWriter, r *http.Request) {
 
 	zap.L().Debug("Discovering Endpoints")
 
-	providerURLs := generateProviderURLs(o.serverFlow, o.serverIP, o.serverPort, o.devMode)
+	providerURLs := o.generateProviderURLs()
 
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(providerURLs)
@@ -83,7 +85,7 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 
 	claims := jwt.MapClaims{
 		"sub":  "1234567890",
-		"iss":  generateCompleteURL(o.serverFlow, o.serverIP, o.serverPort, "", o.devMode),
+		"iss":  o.generateCompleteURL(""),
 		"name": "oidc-mock",
 		"exp":  tokenExpiry,
 		"aud":  "abcd1234.apps.oidcmock.com",
@@ -97,6 +99,10 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		zap.L().Error("Unable to sign JWT", zap.Error(err))
 		return
+	}
+
+	if o.serverFlow == ServerFlowTypeMissingToken {
+		idToken = ""
 	}
 
 	p := tokens{
@@ -120,8 +126,18 @@ func (o *oidcServer) IssueCertificate(w http.ResponseWriter, r *http.Request) {
 
 	zap.L().Debug("Issuing Certificate")
 
+	var verifyKey interface{}
+	switch o.serverFlow {
+	case ServerFlowTypeInvalidCert:
+		verifyKey = []byte("invalidKey")
+	case ServerFlowTypeMissingCert:
+		verifyKey = []byte("")
+	default:
+		verifyKey = o.rsa.verifyKey()
+	}
+
 	jwk := jose.JSONWebKey{
-		Key:       o.rsa.verifyKey(),
+		Key:       verifyKey,
 		KeyID:     o.keyID,
 		Use:       "sig",
 		Algorithm: "RS256",
@@ -145,4 +161,37 @@ func (o *oidcServer) UserInfo(w http.ResponseWriter, r *http.Request) {
 
 	zap.L().Debug("Userinfo called")
 	// Do nothing
+}
+
+func (o *oidcServer) generateProviderURLs() providerEndpoints {
+
+	return providerEndpoints{
+		Issuer:      o.generateCompleteURL(""),
+		AuthURL:     o.generateCompleteURL("/auth"),
+		TokenURL:    o.generateCompleteURL("/token"),
+		UserInfoURL: o.generateCompleteURL("/userInfo"),
+		JWKSURL:     o.generateCompleteURL("/cert"),
+	}
+}
+
+func (o *oidcServer) generateCompleteURL(endpoint string) string {
+
+	if endpoint == "" && o.serverFlow != ServerFlowTypeSuccess {
+		endpoint = "/"
+	}
+
+	switch o.serverFlow {
+	case ServerFlowTypeAuthFailure:
+		endpoint = path.Join(endpoint, AuthFailure)
+	case ServerFlowTypeInvalidCert:
+		endpoint = path.Join(endpoint, CertInvalid)
+	case ServerFlowTypeInvalidToken:
+		endpoint = path.Join(endpoint, TokenInvalid)
+	}
+
+	if o.devMode {
+		return fmt.Sprintf("https://%s%s%s", o.serverIP, o.serverPort, endpoint)
+	}
+
+	return fmt.Sprintf("https://%s%s", o.serverIP, endpoint)
 }
