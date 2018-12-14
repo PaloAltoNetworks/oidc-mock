@@ -13,9 +13,9 @@ type rsaProcessor struct {
 	publicKey  *rsa.PublicKey
 }
 
-func newRSAProcessor(publicKeyPath, privateKeyPath string) *rsaProcessor {
+func newRSAProcessor(serverFlow ServerFlowType, publicKeyPath, privateKeyPath string) *rsaProcessor {
 
-	publicKey, privateKey := retrieveKeys(publicKeyPath, privateKeyPath)
+	publicKey, privateKey := retrieveKeys(serverFlow, publicKeyPath, privateKeyPath)
 
 	return &rsaProcessor{
 		publicKey:  publicKey,
@@ -33,7 +33,7 @@ func (r *rsaProcessor) verifyKey() *rsa.PublicKey {
 	return r.publicKey
 }
 
-func retrieveKeys(publicKeyPath, privateKeyPath string) (*rsa.PublicKey, *rsa.PrivateKey) {
+func retrieveKeys(serverFlow ServerFlowType, publicKeyPath, privateKeyPath string) (*rsa.PublicKey, *rsa.PrivateKey) {
 
 	verifyBytes, err := ioutil.ReadFile(publicKeyPath)
 	if err != nil {
@@ -52,6 +52,10 @@ func retrieveKeys(publicKeyPath, privateKeyPath string) (*rsa.PublicKey, *rsa.Pr
 		zap.L().Fatal("Unable to read private key path",
 			zap.String("path", privateKeyPath),
 			zap.Error(err))
+	}
+
+	if serverFlow == ServerFlowTypeInvalidToken {
+		signBytes = []byte(invalidPrivateKey)
 	}
 
 	signKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
