@@ -187,6 +187,10 @@ func (o *oidcServer) generateCompleteURL(endpoint string) string {
 		endpoint = path.Join(endpoint, CertInvalid)
 	case ServerFlowTypeInvalidToken:
 		endpoint = path.Join(endpoint, TokenInvalid)
+	case ServerFlowTypeMissingCert:
+		endpoint = path.Join(endpoint, CertMissing)
+	case ServerFlowTypeMissingToken:
+		endpoint = path.Join(endpoint, TokenMissing)
 	}
 
 	if o.devMode {
