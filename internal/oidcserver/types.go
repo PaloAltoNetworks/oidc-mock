@@ -13,6 +13,7 @@ type OIDCServer interface {
 	IssueToken(w http.ResponseWriter, r *http.Request)
 	IssueCertificate(w http.ResponseWriter, r *http.Request)
 	UserInfo(w http.ResponseWriter, r *http.Request)
+	Healthz(w http.ResponseWriter, r *http.Request)
 }
 
 type oidcServer struct {
@@ -53,4 +54,5 @@ const (
 	ServerFlowTypeInvalidCert
 	ServerFlowTypeMissingToken
 	ServerFlowTypeMissingCert
+	ServerFlowHealthz
 )

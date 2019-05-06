@@ -21,6 +21,7 @@ import (
 type Configuration struct {
 	ServerIP   string
 	ServerPort string
+	TLS        bool
 
 	PrivateKeyPath string
 	PublicKeyPath  string
@@ -51,45 +52,51 @@ func StartServer(cfg *Configuration) {
 
 	registerRoutes(r, cfg.ServerIP, cfg.ServerPort, cfg.PublicKeyPath, cfg.PrivateKeyPath, cfg.DevelopmentMode)
 
-	config := &tls.Config{
-		PreferServerCipherSuites: true,
-		CipherSuites: []uint16{
-			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
-			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
-			tls.TLS_FALLBACK_SCSV,
-			tls.TLS_RSA_WITH_RC4_128_SHA,
-			tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,
-			tls.TLS_RSA_WITH_AES_128_CBC_SHA,
-			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
-			tls.TLS_RSA_WITH_AES_128_CBC_SHA256,
-			tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
-			tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
-			tls.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
-			tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-			tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-			tls.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
-			tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
-			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-			tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-			tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
-			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-		},
-		MinVersion: tls.VersionSSL30,
-		MaxVersion: tls.VersionTLS12,
-	}
-
 	server := &http.Server{
-		Addr:      cfg.ServerPort,
-		Handler:   r,
-		TLSConfig: config,
+		Addr:    cfg.ServerPort,
+		Handler: r,
 	}
 
 	go func() {
-		if err := server.ListenAndServeTLS(".data/server.crt", ".data/server.key"); err != nil {
+		var err error
+		if cfg.TLS {
+			server.TLSConfig = &tls.Config{
+				PreferServerCipherSuites: true,
+				CipherSuites: []uint16{
+					tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+					tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+					tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+					tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+					tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
+					tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
+					tls.TLS_FALLBACK_SCSV,
+					tls.TLS_RSA_WITH_RC4_128_SHA,
+					tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,
+					tls.TLS_RSA_WITH_AES_128_CBC_SHA,
+					tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+					tls.TLS_RSA_WITH_AES_128_CBC_SHA256,
+					tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
+					tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+					tls.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+					tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+					tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+					tls.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+					tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
+					tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+					tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+					tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
+					tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+				},
+				MinVersion: tls.VersionSSL30,
+				MaxVersion: tls.VersionTLS12,
+			}
+			err = server.ListenAndServeTLS(".data/server.crt", ".data/server.key")
+
+		} else {
+			err = server.ListenAndServe()
+		}
+
+		if err != nil {
 			zap.L().Fatal("Unable to start server",
 				zap.String("port", cfg.ServerPort),
 				zap.Error(err))

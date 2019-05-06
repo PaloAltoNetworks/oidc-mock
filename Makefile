@@ -22,7 +22,7 @@ clean:
 
 docker_build: package
 		cd docker && docker \
-			build \
+			build --no-cache=true --rm \
 			-t $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) .
 
 docker_push: docker_build

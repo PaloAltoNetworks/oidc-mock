@@ -1,12 +1,12 @@
 apiVersion: extensions/v1beta1
-kind: ReplicaSet
+kind: Deployment
 metadata:
   labels:
     app: server
   name: oidc-mock
   namespace: oidc-mock
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: server
@@ -16,16 +16,22 @@ spec:
         app: server
     spec:
       containers:
-        - image: gcr.io/aporetodev/oidc-mock:latest
+        - name: oidc-mock
+          image: gcr.io/aporetodev/oidc-mock:latest
           imagePullPolicy: Always
           env:
              - name: OIDCMOCK_LOG_LEVEL
-               value: "info"
+               value: "debug"
                # NOTE: This is used to generate endpoints to consumers
              - name: OIDCMOCK_SERVER_IP
-               value: "oidcmock.aporeto.us"
+               value: "apotests.oidc.aporeto.us"
              - name: OIDCMOCK_SERVER_PORT
                value: :6999
              - name: OIDCMOCK_DEV
                value: "false"
-          name: oidc-mock
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 6999
+            initialDelaySeconds: 3
+            periodSeconds: 3
