@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: oidc-apotests-ingress
+  namespace: oidc-mock
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "soorya-oidc-mock"
+    networking.gke.io/managed-certificates: oidc-apotests-certificate
+spec:
+  backend:
+    serviceName: oidc-server-public
+    servicePort: 80
