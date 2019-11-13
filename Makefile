@@ -16,6 +16,7 @@ DOCKER_IMAGE_TAG ?= $()
 TG := go.aporeto.io/tg
 GENCREDS := scripts/gencreds.sh
 MKVERSION := scripts/mkversion.sh
+SRC := $(shell find . -name .history -prune -o -name \*.go -print | grep -v $(VERSION_FILE) )
 
 .PHONY: all version build build.386 .data package  docker_build docker_push clean .data
 
@@ -31,13 +32,13 @@ version:
 	mkdir -p $$(dirname $(VERSION_FILE) )
 	$(MKVERSION) "$(VERSION_FILE)"  "$(VERSION)" "$(PROJECT_NAME)" "$(PROJECT_SHA)" "$(PROJECT_BRANCH)" "$(REVISION)"
 
-$(VERSION_FILE): Makefile $(MKVERSION)
+$(VERSION_FILE): Makefile $(MKVERSION) $(SRC)
 	@ $(MAKE) version
 
-build: $(VERSION_FILE)
+build: $(VERSION_FILE) $(SRC)
 	go build -o oidcmock
 
-build.386: $(VERSION_FILE)
+build.386: $(VERSION_FILE) $(SRC)
 	env GOOS=linux GOARCH=386 go build -o oidcmock.386
 
 .data:

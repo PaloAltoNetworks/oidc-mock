@@ -84,11 +84,15 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 	tokenExpiry := time.Now().AddDate(100, 0, 0).Unix()
 
 	claims := jwt.MapClaims{
-		"sub":  "1234567890",
-		"iss":  o.generateCompleteURL(""),
-		"name": "oidc-mock",
-		"exp":  tokenExpiry,
-		"aud":  "abcd1234.apps.oidcmock.com",
+		"sub":            "1234567890",
+		"iss":            o.generateCompleteURL(""),
+		"name":           "oidc-mock",
+		"exp":            tokenExpiry,
+		"aud":            "abcd1234.apps.oidcmock.com",
+		"email":          "oidc-mock@example.com",
+		"email_verified": true,
+		"groups":         [2]string{"test", "dev"},
+		"enabled":        true,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
