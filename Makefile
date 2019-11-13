@@ -60,10 +60,10 @@ docker_build: package
 			     $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(PROJECT_BRANCH)
 
 docker_push: docker_build
-		echo docker \
+		docker \
 			push \
 			$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
-		echo docker
+		docker
 			push \
 			$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(PROJECT_BRANCH)
 
@@ -71,3 +71,7 @@ clean:
 	rm -rf vendor
 	rm -rf .data
 	rm -rf Gopkg.lock
+	rm -rf oidcmock oidcmock.386
+	rm -rf docker/oidcmock*
+	rm -rf docker/.data
+
