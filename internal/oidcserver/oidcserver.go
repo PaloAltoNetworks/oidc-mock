@@ -91,7 +91,7 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 		"aud":            "abcd1234.apps.oidcmock.com",
 		"email":          "oidc-mock@example.com",
 		"email_verified": true,
-		"groups":         [2]string{"test", "dev"},
+		"groups":         []string{"test", "dev"},
 		"enabled":        true,
 	}
 
