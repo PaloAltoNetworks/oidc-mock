@@ -11,8 +11,9 @@ import (
 	"syscall"
 	"time"
 
+	"go.aporeto.io/oidc-mock/internal/versions"
+
 	"github.com/gorilla/mux"
-	"github.com/prometheus/common/version"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -31,15 +32,15 @@ type Configuration struct {
 	LogLevel  string
 }
 
-func banner(version, revision string) {
+func banner(version string) {
 
-	fmt.Printf("\n\x1b[1m\x1b[38;5;6m◼︎ %s\x1b[0m \x1b[38;5;242m%s (%s) %s\n\n\x1b[0m", strings.ToTitle("OIDC-MOCK"), version, revision, "v1.0.0")
+	fmt.Printf("\n\x1b[1m\x1b[38;5;6m◼︎ %s\x1b[0m \x1b[38;5;242m %s\n\n\x1b[0m", strings.ToTitle("OIDC-MOCK"), version)
 }
 
 // StartServer starts the server
 func StartServer(cfg *Configuration) {
 
-	banner(version.Version, version.Revision)
+	banner(versions.GetVersions())
 
 	if err := setLogs(cfg.LogFormat, cfg.LogLevel); err != nil {
 		log.Fatalf("Error setting up logs: %s", err)

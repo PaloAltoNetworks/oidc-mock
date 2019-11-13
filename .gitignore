@@ -1,6 +1,8 @@
 oidcmock
+oidcmock.386
 oidc-mock
 docker/oidcmock
 .data
 vendor
 Gopkg.lock
+internal/versions/versions.go

@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aporeto-inc/regodux/versions"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.aporeto.io/oidc-mock/internal/entrypoint"
+	"go.aporeto.io/oidc-mock/internal/versions"
 )
 
 func main() {
@@ -35,7 +35,7 @@ var oidcMockCmd = &cobra.Command{
 	},
 	RunE: func(ccmd *cobra.Command, args []string) (err error) {
 		if viper.GetBool("version") {
-			fmt.Println(versions.ProjectVersion, "-", versions.ProjectSha[:7])
+			fmt.Println(versions.GetVersions())
 			return nil
 		}
 
