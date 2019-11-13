@@ -34,10 +34,14 @@ version:
 $(VERSION_FILE): Makefile $(MKVERSION) $(SRC)
 	@ $(MAKE) version
 
-build: $(VERSION_FILE) $(SRC)
+build: oidcmock
+
+oidcmock: $(VERSION_FILE) $(SRC)
 	go build -o oidcmock
 
-build.386: $(VERSION_FILE) $(SRC)
+build.386: oidcmock.386
+
+oidcmock.386: $(VERSION_FILE) $(SRC)
 	env GOOS=linux GOARCH=386 go build -o oidcmock.386
 
 .data:
