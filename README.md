@@ -2,7 +2,7 @@
 Simple server to handle OIDC flow
 
 # scripts/mkversion.sh
-Script to create version/version.go from the current git branch and hash
+Script to create internal/versions/versions.go from the current git branch and hash
 
 # scripts/gencreds.sh
 Script to generate SSL certificates.
