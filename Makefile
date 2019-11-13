@@ -12,7 +12,6 @@ ifeq "$(PROJECT_BRANCH)" "master"
 else
 	DOCKER_IMAGE_TAG := $(PROJECT_SHA_SHORT)
 endif
-DOCKER_IMAGE_TAG ?= $()
 TG := go.aporeto.io/tg
 GENCREDS := scripts/gencreds.sh
 MKVERSION := scripts/mkversion.sh
