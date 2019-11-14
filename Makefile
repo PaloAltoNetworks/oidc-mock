@@ -75,7 +75,7 @@ clean:
 	rm -rf .data
 	rm -rf Gopkg.lock
 	rm -rf oidcmock oidcmock.386
-	rm -rf docker/oidcmock.386
+	rm -rf docker/oidcmock
 	rm -rf docker/.data
 	rm -rf $(VERSION_FILE)
 
