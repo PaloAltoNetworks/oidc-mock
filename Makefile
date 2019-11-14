@@ -17,14 +17,15 @@ GENCREDS := scripts/gencreds.sh
 MKVERSION := scripts/mkversion.sh
 SRC := $(shell find . -name .history -prune -o -name \*.go -print | grep -v $(VERSION_FILE) )
 
-.PHONY: all version build build.386 .data package  docker_build docker_push clean .data
+.PHONY: all version build .data package docker docker_build docker_push clean .data
 
 all:
 	@ echo "Make targets are 'build', 'version',  'docker_build' or 'docker_push':"
 	@ echo
 	@ echo "'make build'        - make the binary"
 	@ echo "'make version'      - rebuild the version file"
-	@ echo "'make docker_build' - make the binary, and build the docker container"
+	@ echo "'make docker'       - make the binary, and build the docker container (same as 'make docker_build)'"
+	@ echo "'make docker_build' - make the binary, and build the docker container (same as 'make docker')"
 	@ echo "'make docker_push'  - make the binary and build and push the docker container to GCR tagged as :$(DOCKER_IMAGE_TAG)"
 
 version:
@@ -39,8 +40,6 @@ build: oidcmock
 oidcmock: $(VERSION_FILE) $(SRC)
 	go build -o oidcmock
 
-build.386: oidcmock.386
-
 oidcmock.386: $(VERSION_FILE) $(SRC)
 	env GOOS=linux GOARCH=386 go build -o oidcmock.386
 
@@ -48,10 +47,12 @@ oidcmock.386: $(VERSION_FILE) $(SRC)
 	go get $(TG)
 	$(GENCREDS) --dns oidcmock.aporeto.us --force
 
-package: .data build.386
+package: .data oidcmock.386
 	cp oidcmock.386 docker/oidcmock
 	rm -rf docker/.data
 	cp -a .data docker/.data
+
+docker: docker_build
 
 docker_build: package
 		cd docker \
