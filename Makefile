@@ -10,7 +10,7 @@ DOCKER_IMAGE_NAME ?= $(PROJECT_NAME)
 ifeq "$(PROJECT_BRANCH)" "master"
 	DOCKER_IMAGE_TAG := latest
 else
-	DOCKER_IMAGE_TAG := $(PROJECT_SHA_SHORT)
+	DOCKER_IMAGE_TAG := $(REVISION)
 endif
 TG := go.aporeto.io/tg
 GENCREDS := scripts/gencreds.sh
@@ -26,7 +26,7 @@ all:
 	@ echo "'make version'      - rebuild the version file"
 	@ echo "'make docker'       - make the binary, and build the docker container (same as 'make docker_build)'"
 	@ echo "'make docker_build' - make the binary, and build the docker container (same as 'make docker')"
-	@ echo "'make docker_push'  - make the binary and build and push the docker container to GCR tagged as :$(DOCKER_IMAGE_TAG)"
+	@ echo "'make docker_push'  - make the binary and build and push the docker container to GCR tagged as ':$(DOCKER_IMAGE_TAG)'"
 
 version:
 	mkdir -p $$(dirname $(VERSION_FILE) )
