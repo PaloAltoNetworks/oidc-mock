@@ -61,7 +61,8 @@ docker_build: package
 			 -t $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) . \
 		  && docker \
 		     tag $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) \
-			     $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(PROJECT_BRANCH)
+			     $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(PROJECT_BRANCH) \
+		  && echo Successfully tagged $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(PROJECT_BRANCH)
 
 docker_push: docker_build
 		docker \
