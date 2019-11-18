@@ -38,7 +38,11 @@ func (o *oidcServer) ProviderEndpoints(w http.ResponseWriter, r *http.Request) {
 	providerURLs := o.generateProviderURLs()
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(providerURLs)
+	err := json.NewEncoder(w).Encode(providerURLs)
+	if err != nil {
+		zap.L().Error("Unable to encode providerURLS to JSON", zap.Error(err))
+		return
+	}
 }
 
 // Authenticate is a mock call which by default redirects to redirect_uri given in request
@@ -84,11 +88,15 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 	tokenExpiry := time.Now().AddDate(100, 0, 0).Unix()
 
 	claims := jwt.MapClaims{
-		"sub":  "1234567890",
-		"iss":  o.generateCompleteURL(""),
-		"name": "oidc-mock",
-		"exp":  tokenExpiry,
-		"aud":  "abcd1234.apps.oidcmock.com",
+		"sub":            "1234567890",
+		"iss":            o.generateCompleteURL(""),
+		"name":           "oidc-mock",
+		"exp":            tokenExpiry,
+		"aud":            "abcd1234.apps.oidcmock.com",
+		"email":          "oidc-mock@example.com",
+		"email_verified": true,
+		"groups":         []string{"test", "dev"},
+		"enabled":        true,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
@@ -113,7 +121,11 @@ func (o *oidcServer) IssueToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(p)
+	err = json.NewEncoder(w).Encode(p)
+	if err != nil {
+		zap.L().Error("Unable to encode tokens to JSON", zap.Error(err))
+		return
+	}
 
 	zap.L().Debug("Token issued")
 }
@@ -148,7 +160,11 @@ func (o *oidcServer) IssueCertificate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(jwks)
+	err := json.NewEncoder(w).Encode(jwks)
+	if err != nil {
+		zap.L().Error("Unable to encode JSONWebKeySet to JSON", zap.Error(err))
+		return
+	}
 
 	zap.L().Debug("Certificate issued")
 }

@@ -4,22 +4,39 @@ dist: trusty
 
 go_import_path: go.aporeto.io/oidc-mock
 
-go:
- - 1.11.2
+matrix:
+  include:
+  - go: "1.12.x"
+    env: LINT_VERSION="@v1.17.1"
+  - go: "1.13.x"
+    env: LINT_VERSION="@v1.21.0"
+
+cache:
+  directories:
+    - $HOME/.cache/go-build
+    - $HOME/gopath/pkg/mod
 
 env:
   global:
     - TOOLS_CMD=golang.org/x/tools/cmd
     - PATH=$GOROOT/bin:$PATH
     - SUDO_PERMITTED=1
+    - GO111MODULE=on
 
 before_install:
-  - go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
-  - go get -u github.com/golang/dep/cmd/dep
+  # this is just to get the golangci-lint. We do it in a tempdir just to get the binary
+  # installed without changing the go.mod file for trireme-lib. Also must get go-diff@v0.5.1
+  # or else go1.11.x will pull in a broken v0.5.0
+  - cp go.mod $dir
+  - old=$PWD; cd $dir
+  - go get github.com/sourcegraph/go-diff@v0.5.1
+  - go get github.com/golangci/golangci-lint/cmd/golangci-lint${LINT_VERSION}
+  - cd $old
 
 install:
-  - dep ensure -v
+  - make versions
+  - go list -m all || true
 
 script:
   - golangci-lint run --deadline=5m --disable-all --exclude-use-default=false --enable=govet --enable=golint --enable=ineffassign --enable=goconst --enable=errcheck --enable=varcheck --enable=structcheck --enable=gosimple --enable=misspell --enable=deadcode --enable=staticcheck --enable=goimports --enable=unused --enable=unconvert --enable=unparam --enable=prealloc --enable=nakedret --enable=typecheck ./...
-  - sudo -E env "PATH=$PATH" go test ./...
+  - go test ./...
