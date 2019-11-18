@@ -19,18 +19,19 @@ SRC := $(shell find . -name .history -prune -o -name \*.go -print | grep -v $(VE
 
 GOMODULES := GO111MODULES=on
 
-.PHONY: all version build .data package docker docker_build docker_push clean .data
+.PHONY: all version versions build .data package docker docker_build docker_push clean .data
 
 all:
 	@ echo "Make targets are 'build', 'version',  'docker_build' or 'docker_push':"
 	@ echo
 	@ echo "'make build'        - make the binary"
-	@ echo "'make version'      - rebuild the version file"
+	@ echo "'make versions'     - rebuild the versions pkg files"
 	@ echo "'make docker'       - make the binary, and build the docker container (same as 'make docker_build)'"
 	@ echo "'make docker_build' - make the binary, and build the docker container (same as 'make docker')"
 	@ echo "'make docker_push'  - make the binary and build and push the docker container to GCR tagged as ':$(DOCKER_IMAGE_TAG)'"
 
-version:
+version: versions
+versions:
 	mkdir -p $$(dirname $(VERSION_FILE) )
 	$(MKVERSION) "$(VERSION_FILE)"  "$(VERSION)" "$(PROJECT_NAME)" "$(PROJECT_SHA)" "$(PROJECT_BRANCH)" "$(REVISION)"
 
