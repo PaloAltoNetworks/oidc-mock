@@ -34,6 +34,7 @@ before_install:
   - cd $old
 
 install:
+  - make versions
   - go list -m all || true
 
 script:
