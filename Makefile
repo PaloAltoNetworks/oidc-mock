@@ -17,6 +17,8 @@ GENCREDS := scripts/gencreds.sh
 MKVERSION := scripts/mkversion.sh
 SRC := $(shell find . -name .history -prune -o -name \*.go -print | grep -v $(VERSION_FILE) )
 
+GOMODULES := GO111MODULES=on
+
 .PHONY: all version build .data package docker docker_build docker_push clean .data
 
 all:
@@ -37,11 +39,11 @@ $(VERSION_FILE): Makefile $(MKVERSION) $(SRC)
 
 build: oidcmock
 
-oidcmock: $(VERSION_FILE) $(SRC)
-	go build -o oidcmock
+oidcmock: $(VERSION_FILE) $(SRC) .data
+	env $(GOMODULES) go build -o oidcmock
 
-oidcmock.386: $(VERSION_FILE) $(SRC)
-	env GOOS=linux GOARCH=386 go build -o oidcmock.386
+oidcmock.386: $(VERSION_FILE) $(SRC) .data
+	env $(GOMODULES) GOOS=linux GOARCH=386 go build -o oidcmock.386
 
 .data:
 	go get $(TG)
