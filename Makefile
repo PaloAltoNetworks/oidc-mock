@@ -1,6 +1,6 @@
 VERSION_FILE := ./internal/versions/versions.go
 PROJECT_NAME := oidc-mock
-VERSION ?= 0.12
+VERSION ?= 0.13
 REVISION := $(shell git describe --match=NeVeRmAtCh --always --abbrev=8 --dirty)
 PROJECT_SHA := $(shell git rev-parse HEAD)
 PROJECT_SHA_SHORT := $(shell git rev-parse HEAD | cut -c1-8)

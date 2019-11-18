@@ -54,5 +54,4 @@ const (
 	ServerFlowTypeInvalidCert
 	ServerFlowTypeMissingToken
 	ServerFlowTypeMissingCert
-	ServerFlowHealthz
 )

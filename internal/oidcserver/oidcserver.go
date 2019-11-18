@@ -185,7 +185,7 @@ func (o *oidcServer) Healthz(w http.ResponseWriter, r *http.Request) {
 	o.Lock()
 	defer o.Unlock()
 
-	zap.L().Debug("Health Endpoint")
+	zap.L().Debug("Health endpoint")
 	w.WriteHeader(200)
 }
 

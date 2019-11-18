@@ -17,6 +17,10 @@ func registerSuccessRoutes(r *mux.Router, serverIP, serverPort, publicKeyPath, p
 	r.HandleFunc("/userInfo", oidc.UserInfo).Methods(http.MethodGet)
 	r.HandleFunc("/token", oidc.IssueToken).Methods(http.MethodPost)
 	r.HandleFunc("/cert", oidc.IssueCertificate).Methods(http.MethodGet)
+
+	// k8s
+	r.HandleFunc("/", oidc.Healthz).Methods(http.MethodGet)
+	r.HandleFunc("/healthz", oidc.Healthz).Methods(http.MethodGet)
 }
 
 func registerAuthFailureRoutes(r *mux.Router, serverIP, serverPort, publicKeyPath, privateKeyPath string, dev bool) {
@@ -72,10 +76,4 @@ func registerTokenMissingRoutes(r *mux.Router, serverIP, serverPort, publicKeyPa
 	r.HandleFunc(path.Join("/userInfo", oidcserver.TokenMissing), oidc.UserInfo).Methods(http.MethodGet)
 	r.HandleFunc(path.Join("/token", oidcserver.TokenMissing), oidc.IssueToken).Methods(http.MethodPost)
 	r.HandleFunc(path.Join("/cert", oidcserver.TokenMissing), oidc.IssueCertificate).Methods(http.MethodGet)
-}
-
-func registerHealthzRoutes(r *mux.Router, serverIP, serverPort, publicKeyPath, privateKeyPath string, dev bool) {
-	oidc := oidcserver.NewOIDCServer(oidcserver.ServerFlowHealthz, serverIP, serverPort, publicKeyPath, privateKeyPath, dev)
-	r.HandleFunc("/", oidc.Healthz).Methods(http.MethodGet)
-	r.HandleFunc("/healthz", oidc.Healthz).Methods(http.MethodGet)
 }

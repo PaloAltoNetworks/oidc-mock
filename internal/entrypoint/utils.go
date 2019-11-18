@@ -12,5 +12,4 @@ func registerRoutes(r *mux.Router, serverIP, serverPort, publicKeyPath, privateK
 	registerTokenInvalidRoutes(r, serverIP, serverPort, publicKeyPath, privateKeyPath, dev)
 	registerCertMissingRoutes(r, serverIP, serverPort, publicKeyPath, privateKeyPath, dev)
 	registerTokenMissingRoutes(r, serverIP, serverPort, publicKeyPath, privateKeyPath, dev)
-	registerHealthzRoutes(r, serverIP, serverPort, publicKeyPath, privateKeyPath, dev)
 }
