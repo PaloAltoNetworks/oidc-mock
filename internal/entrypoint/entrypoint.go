@@ -79,8 +79,8 @@ func StartServer(cfg *Configuration) {
 			tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
 			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
 		},
-		MinVersion: tls.VersionSSL30,
-		MaxVersion: tls.VersionTLS12,
+		MinVersion: tls.VersionTLS10,
+		MaxVersion: tls.VersionTLS13,
 	}
 
 	server := &http.Server{

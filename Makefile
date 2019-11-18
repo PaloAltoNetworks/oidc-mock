@@ -17,18 +17,21 @@ GENCREDS := scripts/gencreds.sh
 MKVERSION := scripts/mkversion.sh
 SRC := $(shell find . -name .history -prune -o -name \*.go -print | grep -v $(VERSION_FILE) )
 
-.PHONY: all version build .data package docker docker_build docker_push clean .data
+GOMODULES := GO111MODULES=on
+
+.PHONY: all version versions build .data package docker docker_build docker_push clean .data
 
 all:
 	@ echo "Make targets are 'build', 'version',  'docker_build' or 'docker_push':"
 	@ echo
 	@ echo "'make build'        - make the binary"
-	@ echo "'make version'      - rebuild the version file"
+	@ echo "'make versions'     - rebuild the versions pkg files"
 	@ echo "'make docker'       - make the binary, and build the docker container (same as 'make docker_build)'"
 	@ echo "'make docker_build' - make the binary, and build the docker container (same as 'make docker')"
 	@ echo "'make docker_push'  - make the binary and build and push the docker container to GCR tagged as ':$(DOCKER_IMAGE_TAG)'"
 
-version:
+version: versions
+versions:
 	mkdir -p $$(dirname $(VERSION_FILE) )
 	$(MKVERSION) "$(VERSION_FILE)"  "$(VERSION)" "$(PROJECT_NAME)" "$(PROJECT_SHA)" "$(PROJECT_BRANCH)" "$(REVISION)"
 
@@ -37,11 +40,11 @@ $(VERSION_FILE): Makefile $(MKVERSION) $(SRC)
 
 build: oidcmock
 
-oidcmock: $(VERSION_FILE) $(SRC)
-	go build -o oidcmock
+oidcmock: $(VERSION_FILE) $(SRC) .data
+	env $(GOMODULES) go build -o oidcmock
 
-oidcmock.386: $(VERSION_FILE) $(SRC)
-	env GOOS=linux GOARCH=386 go build -o oidcmock.386
+oidcmock.386: $(VERSION_FILE) $(SRC) .data
+	env $(GOMODULES) GOOS=linux GOARCH=386 go build -o oidcmock.386
 
 .data:
 	go get $(TG)
