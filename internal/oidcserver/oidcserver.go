@@ -179,16 +179,6 @@ func (o *oidcServer) UserInfo(w http.ResponseWriter, r *http.Request) {
 	// Do nothing
 }
 
-// Healthz ...
-func (o *oidcServer) Healthz(w http.ResponseWriter, r *http.Request) {
-
-	o.Lock()
-	defer o.Unlock()
-
-	zap.L().Debug("Health endpoint")
-	w.WriteHeader(200)
-}
-
 func (o *oidcServer) generateProviderURLs() providerEndpoints {
 
 	return providerEndpoints{

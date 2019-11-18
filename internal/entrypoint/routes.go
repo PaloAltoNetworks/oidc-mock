@@ -6,7 +6,15 @@ import (
 
 	"github.com/gorilla/mux"
 	"go.aporeto.io/oidc-mock/internal/oidcserver"
+	"go.uber.org/zap"
 )
+
+// Healthz ...
+func healthz(w http.ResponseWriter, r *http.Request) {
+
+	zap.L().Debug("Health endpoint")
+	w.WriteHeader(200)
+}
 
 func registerSuccessRoutes(r *mux.Router, serverIP, serverPort, publicKeyPath, privateKeyPath string, dev bool) {
 
@@ -18,9 +26,9 @@ func registerSuccessRoutes(r *mux.Router, serverIP, serverPort, publicKeyPath, p
 	r.HandleFunc("/token", oidc.IssueToken).Methods(http.MethodPost)
 	r.HandleFunc("/cert", oidc.IssueCertificate).Methods(http.MethodGet)
 
-	// k8s
-	r.HandleFunc("/", oidc.Healthz).Methods(http.MethodGet)
-	r.HandleFunc("/healthz", oidc.Healthz).Methods(http.MethodGet)
+	// k8s requires a '/healthz' endpoint. GCP load-balancers will use '/'
+	r.HandleFunc("/", healthz).Methods(http.MethodGet)
+	r.HandleFunc("/healthz", healthz).Methods(http.MethodGet)
 }
 
 func registerAuthFailureRoutes(r *mux.Router, serverIP, serverPort, publicKeyPath, privateKeyPath string, dev bool) {
