@@ -9,8 +9,10 @@ DOCKER_REGISTRY ?= gcr.io/aporetodev
 DOCKER_IMAGE_NAME ?= $(PROJECT_NAME)
 ifeq "$(PROJECT_BRANCH)" "master"
 	DOCKER_IMAGE_TAG := latest
+	LOCALHOST_SAN :=
 else
 	DOCKER_IMAGE_TAG := $(REVISION)
+	LOCALHOST_SAN := --dns localhost --ip 127.0.0.1
 endif
 TG := go.aporeto.io/tg
 GENCREDS := scripts/gencreds.sh
@@ -48,7 +50,7 @@ oidcmock.386: $(VERSION_FILE) $(SRC) .data
 
 .data:
 	go get $(TG)
-	$(GENCREDS) --dns oidcmock.aporeto.us --force
+	$(GENCREDS) $(LOCALHOST_SAN) --dns oidcmock.aporeto.us --dns apotests.oidc.aporeto.us --force
 
 package: .data oidcmock.386
 	cp oidcmock.386 docker/oidcmock
@@ -60,7 +62,7 @@ docker: docker_build
 docker_build: package
 		cd docker \
 		  && docker \
-		     build \
+		     build --no-cache=true \
 			 -t $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) . \
 		  && docker \
 		     tag $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) \
