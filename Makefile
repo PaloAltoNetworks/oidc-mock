@@ -48,7 +48,7 @@ oidcmock.386: $(VERSION_FILE) $(SRC) .data
 
 .data:
 	go get $(TG)
-	$(GENCREDS) --dns oidcmock.aporeto.us --force
+	$(GENCREDS) --dns oidcmock.aporeto.us --dns apotests.oidc.aporeto.us --force
 
 package: .data oidcmock.386
 	cp oidcmock.386 docker/oidcmock

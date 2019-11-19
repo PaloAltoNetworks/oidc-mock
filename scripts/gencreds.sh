@@ -1,60 +1,59 @@
 #!/bin/bash -e
 
-CA_SAN=${CA_SAN:-$2}
-FORCE=${FORCE:-$3}
-
 usage()
 {
-    echo "usage: gencreds.sh [--dns] ['hello.com'] --force"
+    echo "usage: gencreds.sh [--dns hello.com]... [--ip 127.0.0.1]... --force"
 }
 
-DNS=0
-IP=0
-# check if its dns or ip
+# CA_SAN can be set externally and imported as well
+# check if dns or ip is supplied on the command line
 while [ "$1" != "" ]; do
-    case $1 in
-            --dns )       DNS=1
-                          ;;
-             --ip )       IP=1
-                          ;;
-      -h | --help )       usage
-                          exit
+  case $1 in
+    --dns | --ip )
+        if [ $# -gt 1 ]; then
+            CA_SAN="${CA_SAN} $1 $2"
+        else
+            usage
+            exit
+        fi
+        ;;
+    -f | --force ) FORCE=1 ;;
+    -h | --help )
+        usage
+        exit
+        ;;
   esac
   shift
 done
 
-# validate and populate field
-if [ "${DNS}" = "1" ]; then
-  [ ! -z ${CA_SAN} ] || (echo "Missing dns" && exit 1)
-    echo "Using DNS ${CA_SAN}"
-    CA_SAN="--dns ${CA_SAN}"
-elif [ "${IP}" = "1" ]; then
-  [ ! -z ${CA_SAN} ] || (echo "Missing ip" && exit 1)
-  echo "Using IP ${CA_SAN}"
-  CA_SAN="--ip ${CA_SAN}"
+if [ -z "${CA_SAN}" ]; then
+  usage
+  exit
 fi
 
 # create creds folder
-if [ "${FORCE}" = "--force" ]; then
+if [ "${FORCE}" = "1" ]; then
   echo "Removing .data"
   rm -rf .data
 fi
 set +e
-mkdir .data
-if [ $? != 0 ]; then
+
+if ! mkdir .data ; then
   echo "Use --force at the end to remove .data permanently"
   exit 1
 fi
 set -e
 
 # generate self signed ca and key
-tg cert --name system --org oidc.com --common-name oidc-mock --pass oidc  ${CA_SAN} --is-ca
+# shellcheck disable=SC2086
+tg cert --name system --org oidc.com --common-name oidc-mock --pass oidc ${CA_SAN} --is-ca
 mv system-cert.pem .data/system.crt
 # decrypt the system key
 tg decrypt --key system-key.pem --pass oidc > .data/system.key
 rm -rf system-key.pem
 # generate ca signed server cert and key
-tg cert --name server --org oidc.com --common-name oidc-mock --pass oidc  ${CA_SAN} --auth-server --signing-cert .data/system.crt --signing-cert-key .data/system.key --signing-cert-key-pass oidc
+# shellcheck disable=SC2086
+tg cert --name server --org oidc.com --common-name oidc-mock --pass oidc ${CA_SAN} --auth-server --signing-cert .data/system.crt --signing-cert-key .data/system.key --signing-cert-key-pass oidc
 mv server-cert.pem .data/server.crt
 # decrypt the server key
 tg decrypt --key server-key.pem --pass oidc > .data/server.key
