@@ -29,6 +29,7 @@ var oidcMockCmd = &cobra.Command{
 		config.LogFormat = viper.GetString("log-format")
 		config.ServerIP = viper.GetString("server-ip")
 		config.ServerPort = viper.GetString("server-port")
+		config.TLS = viper.GetBool("tls")
 		config.DevelopmentMode = viper.GetBool("dev")
 		time.Local = time.UTC
 		return nil
@@ -52,8 +53,9 @@ func init() {
 	oidcMockCmd.Flags().StringVar(&config.LogLevel, "log-level", "info", "Set the log-level between info, debug, trace")
 	oidcMockCmd.Flags().StringVar(&config.LogFormat, "log-format", "human", "Set the log-format between console, json")
 
-	oidcMockCmd.Flags().StringVar(&config.ServerIP, "server-ip", "192.168.100.1", "Set the default server ip")
+	oidcMockCmd.Flags().StringVar(&config.ServerIP, "server-ip", "127.0.0.1", "Set the default server ip")
 	oidcMockCmd.Flags().StringVar(&config.ServerPort, "server-port", ":6999", "Set the default server port")
+	oidcMockCmd.Flags().BoolVar(&config.TLS, "tls", false, "Enable if the server supports TLS")
 
 	oidcMockCmd.Flags().BoolVar(&config.DevelopmentMode, "dev", false, "Enable development mode")
 
