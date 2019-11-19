@@ -73,7 +73,7 @@ docker_push: docker_build
 		docker \
 			push \
 			$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
-		docker
+		docker \
 			push \
 			$(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(PROJECT_BRANCH)
 
